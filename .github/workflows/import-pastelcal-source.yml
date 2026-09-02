@@ -1,0 +1,44 @@
+name: Import PastelCal Source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.source-parts/trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Recreate and verify source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .source-parts/part00 .source-parts/part01 .source-parts/part02 .source-parts/part03 .source-parts/part04 | base64 --decode > /tmp/pastelcal-source.tar.gz
+          echo '93585dfba2a648e0230c45157147582dd80b87ed29efb9b83c42873f08d95d21  /tmp/pastelcal-source.tar.gz' | sha256sum -c -
+
+      - name: Unpack PastelCal Android source
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf /tmp/pastelcal-source.tar.gz -C .
+          rm -rf .source-parts
+          rm -f .github/workflows/import-pastelcal-source.yml
+
+      - name: Commit source to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Add PastelCal Android source code'
+          git push origin HEAD:main

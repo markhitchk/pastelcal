@@ -209,7 +209,7 @@ private fun PastelCalApp(
                     tasks = allItems.filter { it.kind == ItemKind.TASK },
                     completedOccurrences = completedOccurrences,
                     onToggle = vm::toggleTaskOccurrence,
-                    onOpen = { editorTarget = EditorTarget(it, it.date); showEditor = true }
+                    onOpen = { item, occurrenceDate -> editorTarget = EditorTarget(item, occurrenceDate); showEditor = true }
                 )
                 AppTab.SEARCH -> SearchScreen(allItems) { editorTarget = EditorTarget(it, it.date); showEditor = true }
                 AppTab.SETTINGS -> SettingsScreen(
@@ -297,7 +297,7 @@ private fun TodayScreen(
         item { SectionTitle("Tasks") }
         if (tasks.isEmpty()) item { EmptyPastelCard("No tasks due today") }
         items(tasks, key = { it.key }) { occurrence ->
-            TaskRow(occurrence.display, onToggle = { onToggleTask(occurrence.source, occurrence.date) }, onOpen = { onOpen(occurrence.source) })
+            TaskRow(occurrence.display, onToggle = { onToggleTask(occurrence.source, occurrence.date) }, onOpen = { onOpen(occurrence.source, occurrence.date) })
         }
     }
 }
@@ -642,7 +642,7 @@ private fun TasksScreen(
     tasks: List<CalendarItem>,
     completedOccurrences: Set<String>,
     onToggle: (CalendarItem, LocalDate) -> Unit,
-    onOpen: (CalendarItem) -> Unit
+    onOpen: (CalendarItem, LocalDate) -> Unit
 ) {
     val today = LocalDate.now()
     val occurrences = remember(tasks, completedOccurrences, today) {

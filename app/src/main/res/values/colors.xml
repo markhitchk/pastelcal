@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="launcher_background">#79C7FF</color>
+    <color name="pastel_canvas">#FFF9F5</color>
+    <color name="pastel_dark_canvas">#17151D</color>
+</resources>

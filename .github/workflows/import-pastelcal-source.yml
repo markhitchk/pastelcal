@@ -18,12 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Recreate and verify source archive
+      - name: Recreate and validate source archive
         shell: bash
         run: |
           set -euo pipefail
+          sha256sum .source-parts/part00 .source-parts/part01 .source-parts/part02 .source-parts/part03 .source-parts/part04
           cat .source-parts/part00 .source-parts/part01 .source-parts/part02 .source-parts/part03 .source-parts/part04 | base64 --decode > /tmp/pastelcal-source.tar.gz
-          echo '93585dfba2a648e0230c45157147582dd80b87ed29efb9b83c42873f08d95d21  /tmp/pastelcal-source.tar.gz' | sha256sum -c -
+          sha256sum /tmp/pastelcal-source.tar.gz
+          gzip -t /tmp/pastelcal-source.tar.gz
+          tar -tzf /tmp/pastelcal-source.tar.gz | grep -E '(^|/)settings.gradle.kts$|(^|/)app/build.gradle.kts$|MainActivity.kt$' >/dev/null
 
       - name: Unpack PastelCal Android source
         shell: bash

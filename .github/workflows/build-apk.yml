@@ -1,4 +1,4 @@
-# Rebuild after source compile fix
+# Rebuild after task callback fix
 name: Build PastelCal APK
 
 on:

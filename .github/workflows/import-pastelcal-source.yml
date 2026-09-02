@@ -1,10 +1,10 @@
 name: Import PastelCal Source
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
-      - '.source-parts/trigger'
+      - '.source-parts/pr-trigger'
 
 permissions:
   contents: write
@@ -13,7 +13,7 @@ jobs:
   import-source:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout pull request
         uses: actions/checkout@v5
         with:
           fetch-depth: 0

@@ -1,47 +1,74 @@
-name: Import PastelCal Source
+name: Import PastelCal 1.1.0 Source
 
 on:
-  pull_request:
+  push:
     branches: [main]
     paths:
-      - '.source-parts/pr-trigger'
+      - '.source-v110/**'
+      - '.github/workflows/import-pastelcal-source.yml'
 
 permissions:
   contents: write
+
+concurrency:
+  group: pastelcal-source-import
+  cancel-in-progress: false
 
 jobs:
   import-source:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout pull request
+      - name: Checkout main
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Recreate and validate source archive
+      - name: Recreate and validate PastelCal 1.1.0 source archive
         shell: bash
         run: |
           set -euo pipefail
-          sha256sum .source-parts/part00 .source-parts/part01 .source-parts/part02 .source-parts/part03 .source-parts/part04
-          cat .source-parts/part00 .source-parts/part01 .source-parts/part02 .source-parts/part03 .source-parts/part04 | base64 --decode > /tmp/pastelcal-source.tar.gz
-          sha256sum /tmp/pastelcal-source.tar.gz
-          gzip -t /tmp/pastelcal-source.tar.gz
-          tar -tzf /tmp/pastelcal-source.tar.gz | grep -E '(^|/)settings.gradle.kts$|(^|/)app/build.gradle.kts$|MainActivity.kt$' >/dev/null
 
-      - name: Unpack PastelCal Android source
+          echo 'aadb7aec82deb130c4a797916d879408847de0cba795b1f7676187ca4ae2e883  .source-v110/part00' | sha256sum -c -
+          echo 'cad3cc904013145642bdfb0ab911b059aa50f8535cdd1ce83e5be9f78eff070a  .source-v110/part01' | sha256sum -c -
+          echo 'a44fa43203c26b70a3147c3e0d520009ccca967247cad72889cba873c5f8c8f2  .source-v110/part02' | sha256sum -c -
+          echo 'fb0833ee309dba010952b57711281974ff34b96c9eba2e16bf4db56672949dfb  .source-v110/part03' | sha256sum -c -
+
+          cat .source-v110/part00 .source-v110/part01 .source-v110/part02 .source-v110/part03 \
+            | base64 --decode > /tmp/pastelcal-1.1.0-source.tar.gz
+
+          echo 'c6a5716946e4e904e20eead12fc35a033a1bf2ebb1f8c90d737fd60f36003aef  /tmp/pastelcal-1.1.0-source.tar.gz' | sha256sum -c -
+          gzip -t /tmp/pastelcal-1.1.0-source.tar.gz
+
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)settings.gradle.kts$'
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)app/build.gradle.kts$'
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)MainActivity.kt$'
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)CycleTracker.kt$'
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)CycleEntryEntity.kt$'
+
+      - name: Unpack Android source and remove transfer files
         shell: bash
         run: |
           set -euo pipefail
-          tar -xzf /tmp/pastelcal-source.tar.gz -C .
-          rm -rf .source-parts
+
+          tar -xzf /tmp/pastelcal-1.1.0-source.tar.gz -C .
+          rm -rf .source-v110 .source-parts .source-v2
           rm -f .github/workflows/import-pastelcal-source.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
 
-      - name: Commit source to main
+      - name: Commit PastelCal 1.1.0 source to main
         shell: bash
         run: |
           set -euo pipefail
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'Add PastelCal Android source code'
+
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit.'
+            exit 0
+          fi
+
+          git commit -m 'Add PastelCal 1.1.0 cycle tracking source'
           git push origin HEAD:main

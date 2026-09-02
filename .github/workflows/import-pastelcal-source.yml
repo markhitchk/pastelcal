@@ -39,11 +39,12 @@ jobs:
           echo 'c6a5716946e4e904e20eead12fc35a033a1bf2ebb1f8c90d737fd60f36003aef  /tmp/pastelcal-1.1.0-source.tar.gz' | sha256sum -c -
           gzip -t /tmp/pastelcal-1.1.0-source.tar.gz
 
-          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)settings.gradle.kts$'
-          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)app/build.gradle.kts$'
-          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)MainActivity.kt$'
-          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)CycleTracker.kt$'
-          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz | grep -Eq '(^|/)CycleEntryEntity.kt$'
+          tar -tzf /tmp/pastelcal-1.1.0-source.tar.gz > /tmp/pastelcal-archive-list.txt
+          grep -Eq '(^|/)settings.gradle.kts$' /tmp/pastelcal-archive-list.txt
+          grep -Eq '(^|/)app/build.gradle.kts$' /tmp/pastelcal-archive-list.txt
+          grep -Eq '(^|/)MainActivity.kt$' /tmp/pastelcal-archive-list.txt
+          grep -Eq '(^|/)CycleTracker.kt$' /tmp/pastelcal-archive-list.txt
+          grep -Eq '(^|/)CycleEntryEntity.kt$' /tmp/pastelcal-archive-list.txt
 
       - name: Unpack Android source and remove transfer files
         shell: bash

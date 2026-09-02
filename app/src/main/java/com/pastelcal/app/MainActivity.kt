@@ -297,7 +297,7 @@ private fun TodayScreen(
         item { SectionTitle("Tasks") }
         if (tasks.isEmpty()) item { EmptyPastelCard("No tasks due today") }
         items(tasks, key = { it.key }) { occurrence ->
-            TaskRow(occurrence.display, onToggle = { onToggleTask(occurrence.source, occurrence.date) }, onOpen = { onOpen(occurrence.source, occurrence.date) })
+            TaskRow(occurrence.display, onToggle = { onToggleTask(occurrence.source, occurrence.date) }, onOpen = { onOpen(occurrence.source) })
         }
     }
 }

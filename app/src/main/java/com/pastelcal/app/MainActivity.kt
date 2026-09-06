@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
 private enum class AppTab(val label: String, val icon: ImageVector) {
     TODAY("Today", Icons.Default.Today),
     CALENDAR("Calendar", Icons.Default.CalendarMonth),
+    PERIOD("Period", Icons.Default.Favorite),
     TASKS("Tasks", Icons.Default.CheckCircle),
     SEARCH("Search", Icons.Default.Search),
     SETTINGS("Settings", Icons.Default.Settings)
@@ -160,7 +161,7 @@ private fun PastelCalApp(
         },
         bottomBar = {
             NavigationBar {
-                AppTab.entries.forEach { tab ->
+                AppTab.entries.filter { it != AppTab.SEARCH }.forEach { tab ->
                     NavigationBarItem(
                         selected = selected == tab,
                         onClick = { selected = tab },
@@ -171,11 +172,13 @@ private fun PastelCalApp(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { create(if (selected == AppTab.TASKS) ItemKind.TASK else ItemKind.EVENT) },
-                icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text(if (selected == AppTab.TASKS) "New task" else "New") }
-            )
+            if (selected == AppTab.TODAY || selected == AppTab.CALENDAR || selected == AppTab.TASKS) {
+                ExtendedFloatingActionButton(
+                    onClick = { create(if (selected == AppTab.TASKS) ItemKind.TASK else ItemKind.EVENT) },
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                    text = { Text(if (selected == AppTab.TASKS) "New task" else "New") }
+                )
+            }
         }
     ) { padding ->
         Box(
@@ -203,6 +206,15 @@ private fun PastelCalApp(
                     onDeleteCycleEntry = vm::deleteCycleEntry,
                     onToggleTask = vm::toggleTaskOccurrence,
                     onShift = vm::shiftItemTime,
+                    onMessage = { scope.launch { snackbarHostState.showSnackbar(it) } }
+                )
+                AppTab.PERIOD -> PeriodTrackerScreen(
+                    settings = settings,
+                    entries = cycleEntries,
+                    onSettingsChange = onSettingsChange,
+                    onStartPeriod = vm::startPeriod,
+                    onEndPeriod = vm::endPeriod,
+                    onDeleteCycleEntry = vm::deleteCycleEntry,
                     onMessage = { scope.launch { snackbarHostState.showSnackbar(it) } }
                 )
                 AppTab.TASKS -> TasksScreen(

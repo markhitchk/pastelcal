@@ -2,7 +2,6 @@ from pathlib import Path
 
 main_path = Path("app/src/main/java/com/pastelcal/app/MainActivity.kt")
 build_path = Path("app/build.gradle.kts")
-workflow_path = Path(".github/workflows/build-apk.yml")
 
 main = main_path.read_text(encoding="utf-8")
 
@@ -12,7 +11,6 @@ replacement = '''        item { ReleaseSettingsPanel(onMessage = onMessage) }\n\
 
 if 'Text("For Emma",' not in main:
     if anchor not in main:
-        # 1.1.1 source may already have a corrected footer; support that too.
         anchor_111 = anchor.replace("PastelCal 1.1.0", "PastelCal 1.1.1")
         if anchor_111 not in main:
             raise SystemExit("Could not find Settings footer insertion point")
@@ -29,9 +27,5 @@ build = build.replace('versionName = "1.1.1"', 'versionName = "1.1.2"')
 if "versionCode = 1010002" not in build or 'versionName = "1.1.2"' not in build:
     raise SystemExit("Version bump to 1.1.2 did not apply")
 build_path.write_text(build, encoding="utf-8")
-
-workflow = workflow_path.read_text(encoding="utf-8")
-workflow = workflow.replace("PastelCal-1.1.1-Period-Tracker-release-unsigned", "PastelCal-1.1.2-Emma-Note-release-unsigned")
-workflow_path.write_text(workflow, encoding="utf-8")
 
 print("Added Emma author note and bumped PastelCal to 1.1.2 / 1010002")

@@ -1,0 +1,37 @@
+name: Apply Emma Intro Screen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch-emma-intro-screen.py'
+      - '.github/workflows/patch-emma-intro-screen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-intro:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Move Emma note to launch screen
+        run: python3 scripts/patch-emma-intro-screen.py
+
+      - name: Commit source update
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No intro-screen changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/pastelcal/app/MainActivity.kt app/build.gradle.kts
+          git commit -m 'Show Emma dedication before main screen'
+          git push origin HEAD:main

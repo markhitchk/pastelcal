@@ -1,5 +1,6 @@
 from pathlib import Path
 
+# One-time source migration: wire the dedicated Period Tracker screen into the main app navigation.
 path = Path("app/src/main/java/com/pastelcal/app/MainActivity.kt")
 text = path.read_text(encoding="utf-8")
 original = text

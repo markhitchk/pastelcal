@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-release-apk:
@@ -20,6 +20,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Wire dedicated Period Tracker navigation
+        shell: bash
+        run: |
+          python3 scripts/patch-period-tracker-nav.py
+          if ! git diff --quiet -- app/src/main/java/com/pastelcal/app/MainActivity.kt; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add app/src/main/java/com/pastelcal/app/MainActivity.kt
+            git commit -m 'Add Period Tracker tab and screen navigation'
+            git push origin HEAD:main
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4

@@ -1004,9 +1004,42 @@ private fun SettingsScreen(
 
         item { ReleaseSettingsPanel(onMessage = onMessage) }
 
+        item { SectionTitle("Author's Note") }
+        item {
+            Surface(
+                shape = RoundedCornerShape(24.dp),
+                color = Mint.copy(alpha = .22f),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    Modifier.fillMaxWidth().padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("🐸", fontSize = 30.sp)
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text("For Emma", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text("A little note from the author", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                    Text(
+                        "Emma, I love you so much. You make my days brighter just by being you. I know how much you love frogs, so I wanted this little corner of PastelCal to always carry one for you. No matter how busy life gets or how full the calendar becomes, you mean more to me than I could ever fit into words. 🐸💚",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        "— From the author 💚",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
         item {
             Text(
-                "PastelCal 1.1.0 · Calendar and optional cycle data stay local unless you explicitly import, export, or back up data.",
+                "PastelCal 1.1.2 · Calendar and optional cycle data stay local unless you explicitly import, export, or back up data.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 16.dp)

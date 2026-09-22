@@ -123,7 +123,7 @@ private class PawStore(context: Context) {
             "flow": "${flow()}",
             "mood": "${mood()}",
             "symptoms": "${symptoms().joinToString(", ")}",
-            "note": "${note().replace(""", "\\"")}"
+            "note": "${note()}"
           }
         }
     """.trimIndent()
